@@ -1,6 +1,7 @@
 const BookInstance = require("../models/bookinstance");
 const Book = require("../models/book");
 const { body, validationResult } = require("express-validator");
+const { default: async } = require("async");
 
 // Display list of all BookInstances.
 exports.bookinstance_list = function (req, res, next) {
@@ -112,12 +113,38 @@ exports.bookinstance_create_post = [
 
 // Display BookInstance delete form on GET.
 exports.bookinstance_delete_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: BookInstance delete GET");
+  async.parallel({
+    bookinstance(callback){
+      BookInstance.findById(req.params.id).populate("book").exec(callback)
+    }
+  },
+  (err, results) => {
+    if (err) {
+      return next(err);
+    }
+    if (results.bookinstance == null) {
+      // No results.
+      res.redirect("/catalog/books");
+    }
+    console.log(results)
+    // Successful, so render.
+    res.render("bookinstance_delete", {
+      title: "Delete book instance",
+      bookinstance: results.bookinstance,
+    });
+  }
+  )
 };
 
-// Handle BookInstance delete on POST.
-exports.bookinstance_delete_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: BookInstance delete POST");
+exports.bookinstance_delete_post = (req, res, next) => {
+      // book has no books. Delete object and redirect to the list of books.
+      BookInstance.findByIdAndRemove(req.body.bookinstanceid, (err) => {
+        if (err) {
+          return next(err);
+        }
+        // Success - go to author list
+        res.redirect("/catalog/bookinstances");
+      });
 };
 
 // Display BookInstance update form on GET.
