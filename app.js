@@ -14,7 +14,8 @@ const helmet = require("helmet");
 const app = express();
 
 const mongoose = require("mongoose");
-const mongoDB = "mongodb+srv://admin:diatomic@cluster0.bnd8bi5.mongodb.net/?retryWrites=true&w=majority";
+const dev_db_url =  "mongodb+srv://admin:diatomic@cluster0.bnd8bi5.mongodb.net/?retryWrites=true&w=majority";
+const mongoDB = process.env.MONGODB_URI || dev_db_url;
 
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
@@ -29,7 +30,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.user(compression());
+app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
