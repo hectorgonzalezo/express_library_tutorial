@@ -14,8 +14,7 @@ const helmet = require("helmet");
 const app = express();
 
 const mongoose = require("mongoose");
-const dev_db_url =  "mongodb+srv://admin:diatomic@cluster0.bnd8bi5.mongodb.net/?retryWrites=true&w=majority";
-const mongoDB = process.env.MONGODB_URI || dev_db_url;
+const mongoDB = process.env.MONGODB_URIl;
 
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
